@@ -1,4 +1,4 @@
-# GREYWAKE
+# Greywake
 
 > *The stars do not move. We do.*
 
