@@ -6,7 +6,7 @@
 
 You are Captain David Mercer. Ex-UGSA fleet officer. You broke command once to save your crew — the brass called it insubordination, you called it survival. Now you captain the Greywake, unaligned and untethered, taking contracts across eight factions and a dozen sectors.
 
-Your crew are not variables. They are constellations of trust and fracture.
+> *Your crew are not variables. They are constellations of trust and fracture.*
 
 **Greywake** is a text RPG powered by a live language model. You type what the Captain does. The ship remembers. No menus, no stat checks, no hand-holding. Just a crew, a ship, and the void between stars.
 
