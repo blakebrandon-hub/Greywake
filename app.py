@@ -56,23 +56,25 @@ def play_greywake():
 def serve_greywake_static(filename):
     return send_from_directory('static/static_greywake', filename)
 
+
 # ─────────────────────────────────────────────
 # MODEL SELECTION
 # ─────────────────────────────────────────────
 
 # Narrator Model
 # "claude-sonnet-4-6" | "gemini-3.1-pro-preview" | "gpt-5.4"
-NARRATOR_MODEL = os.environ.get("NARRATOR_MODEL", "claude-sonnet-4-6")
+NARRATOR_MODEL = os.environ.get("NARRATOR_MODEL", "gemini-3.1-flash-lite-preview")
 
 # Image Generation Model
-# Options: "imagen-4.0-fast-generate-001" | "gpt-image-1.5"
-IMAGE_MODEL = os.environ.get("IMAGE_MODEL", "gpt-image-1.5")
+# Options: "imagen-4.0-fast-generate-001" | "gpt-image-1.5" | "gemini-2.5-flash-image" (Nano Banana)
+IMAGE_MODEL = os.environ.get("IMAGE_MODEL", "imagen-4.0-fast-generate-001")
 
 # ─────────────────────────────────────────────
 # API CLIENTS
 # ─────────────────────────────────────────────
 
-gemini_key = os.environ.get("GEMINI_API_KEY")
+#gemini_key = os.environ.get("GEMINI_API_KEY")
+gemini_key = 'AIzaSyAlZ-3ed8QXpizZjmInrTIwh4kjLx_Iq5M'
 gemini_client = genai.Client(api_key=gemini_key) if gemini_key else None
 
 openai_key = os.environ.get("OPENAI_API_KEY")
@@ -103,7 +105,7 @@ IMAGE_PROVIDER = get_provider(IMAGE_MODEL)
 # HARD-CODED FAST MODELS (ARCHIVIST + IMAGE REFINER)
 # ─────────────────────────────────────────────
 
-GEMINI_ARCHIVIST_AND_REFINER = 'gemini-flash-lite-latest'
+GEMINI_ARCHIVIST_AND_REFINER = 'gemini-3.1-flash-lite-preview'
 GPT_ARCHIVIST_AND_REFINER = "gpt-5.4-mini"
 CLAUDE_ARCHIVIST_AND_REFINER = "claude-haiku-4-5"
 
@@ -341,6 +343,26 @@ def generate_image(visual_prompt, aspect_ratio="16:9"):
         else:
             raise ValueError("GPT Image generation returned no image")
     
+    elif "flash-image" in IMAGE_MODEL.lower():  # Nano Banana – gemini-2.5-flash-image
+        if not gemini_client:
+            raise ValueError("GEMINI_API_KEY not configured for image generation")
+
+        response = gemini_client.models.generate_content(
+            model=IMAGE_MODEL,
+            contents=visual_prompt,
+            config=types.GenerateContentConfig(
+                response_modalities=["IMAGE", "TEXT"],
+                temperature=1.0,
+            )
+        )
+
+        for part in response.candidates[0].content.parts:
+            if part.inline_data is not None:
+                img_b64 = base64.b64encode(part.inline_data.data).decode("utf-8")
+                return img_b64
+
+        raise ValueError("Nano Banana returned no image — prompt may have been blocked or produced text only")
+
     else:
         raise ValueError(f"Unsupported IMAGE_MODEL: {IMAGE_MODEL}")
 
