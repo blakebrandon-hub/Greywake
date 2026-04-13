@@ -73,8 +73,7 @@ IMAGE_MODEL = os.environ.get("IMAGE_MODEL", "imagen-4.0-fast-generate-001")
 # API CLIENTS
 # ─────────────────────────────────────────────
 
-#gemini_key = os.environ.get("GEMINI_API_KEY")
-gemini_key = 'AIzaSyAlZ-3ed8QXpizZjmInrTIwh4kjLx_Iq5M'
+gemini_key = os.environ.get("GEMINI_API_KEY")
 gemini_client = genai.Client(api_key=gemini_key) if gemini_key else None
 
 openai_key = os.environ.get("OPENAI_API_KEY")
